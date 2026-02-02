@@ -128,4 +128,4 @@
       ansible.builtin.shell: |
         cd /tmp/hailo-apps-internal
         . venv_hailo_apps/bin/activate
-        ./run_tests.sh --sanity
+        ./run_tests.sh {{ test_arg }}
