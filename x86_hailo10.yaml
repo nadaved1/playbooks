@@ -69,7 +69,7 @@
         dest: "{{ download_path }}/{{ item }}"
       loop:
         - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
-        - "hailort-{{ hrt_ver }}-cp313-linux_x86_64.whl"
+        - "hailort-{{ hrt_ver }}-cp313-cp313-linux_x86_64.whl"
         - "hailort_{{ hrt_ver }}_amd64.deb"
         - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
         
