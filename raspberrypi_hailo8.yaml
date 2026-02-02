@@ -1,0 +1,49 @@
+---
+- name: Basic Installation
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Verify effective user (should be 0)
+      command: id -u
+      register: idu
+      changed_when: false
+    - name: Debug User
+      debug:
+        msg: "Effective UID: {{ idu.stdout }}"
+        
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      become: true
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+    - name: Upgrade all packages
+      package:
+        name: "*"
+        state: latest
+    - name: Remove un-needed packages
+      ansible.builtin.apt:
+        autoremove: yes
+    - name: Install dependencies
+      package:
+        name: 
+          - curl
+          - hailo-all
+          - git
+          - python3-pip
+          - python3
+        state: present
+    - name: Clone the Repo
+      become: true
+      ansible.builtin.git:
+        repo: "https://github.com/nadaved1/hailo-apps-internal.git"
+        dest: "/tmp/hailo-apps-internal"
+        version: dev
+    - name: Install the GH
+      become: true
+      ansible.builtin.shell: |
+        cd /tmp/hailo-apps-internal
+        sudo ./install.sh
