@@ -47,3 +47,8 @@
       ansible.builtin.shell: |
         cd /tmp/hailo-apps-internal
         sudo ./install.sh
+    - name: Run the tests
+      ansible.builtin.shell: |
+        cd /tmp/hailo-apps-internal
+        . venv_hailo_apps/bin/activate
+        ./run_tests.sh
