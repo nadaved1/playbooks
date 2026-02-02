@@ -78,13 +78,13 @@
         deb: "{{ download_path }}/{{ item }}"
         state: present
       loop:
-        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}.deb"
-        - "hailort_{{ hrt_ver }}_arm64.deb"
-        - "hailo-tappas-core_{{ hrt_ver }}_arm64.deb"
+        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
+        - "hailort_{{ hrt_ver }}_amd64.deb"
+        - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
 
     - name: Install Python wheel using pip
       pip:
-        name: "{{ download_path }}/hailort-{{ hrt_ver }}-cp313-linux_aarch64.whl"
+        name: "{{ download_path }}/hailort-{{ hrt_ver }}-cp313-cp313-linux_x86_64.whl"
         state: present
         executable: pip3  # Ensures it uses Python 3
       
