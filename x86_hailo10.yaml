@@ -78,9 +78,9 @@
         deb: "{{ download_path }}/{{ item }}"
         state: present
       loop:
-        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
         - "hailort_{{ hrt_ver }}_amd64.deb"
         - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
+        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
 
     - name: Install Python wheel using pip
       pip:
