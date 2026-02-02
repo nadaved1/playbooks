@@ -1,0 +1,107 @@
+---
+- name: Basic Installation
+  hosts: all
+  become: true
+  vars:
+    base_url: "https://dev-public.hailo.ai/2025_10/Hailo10/"
+    download_path: "/tmp/hailo_pkgs"
+    
+  pre_tasks:
+  - name: Register kernel version
+    become: false
+    ansible.builtin.command: uname -r
+    register: kernel_ver
+    changed_when: false
+
+  - name: Register OS version (from /etc/os-release)
+    become: false
+    ansible.builtin.shell: "grep VERSION /etc/os-release"
+    register: os_ver
+    changed_when: false
+
+  - name: Register uptime
+    become: false
+    ansible.builtin.command: uptime
+    register: uptime_out
+    changed_when: false
+
+  - name: Summary of system information
+    ansible.builtin.debug:
+      msg:
+        - "Kernel Version: {{ kernel_ver.stdout }}"
+        - "OS Version Line: {{ os_ver.stdout }}"
+        - "Uptime: {{ uptime_out.stdout }}"
+        
+  tasks:
+    - name: Update apt cache (Debian/Ubuntu)
+      become: true
+      ansible.builtin.apt:
+        update_cache: yes
+        upgrade: yes
+        cache_valid_time: 3600
+      when: ansible_os_family == "Debian"
+    - name: Upgrade all packages
+      package:
+        name: "*"
+        state: latest
+    - name: Remove un-needed packages
+      ansible.builtin.apt:
+        autoremove: yes
+    - name: Install dependencies
+      package:
+        name: 
+          - curl
+          - git
+          - python3-pip
+          - python3
+        state: present
+        
+    - name: Ensure temporary download directory exists
+      file:
+        path: "{{ download_path }}"
+        state: directory
+        mode: '0755'
+        
+    - name: Download .deb and .whl files from Hailo server
+      get_url:
+        url: "{{ base_url }}{{ item }}"
+        dest: "{{ download_path }}/{{ item }}"
+      loop:
+        - hailo_gen_ai_model_zoo_5.2.0.deb
+        - hailort-5.2.0-cp313-linux_aarch64.whl
+        - hailort_5.2.0_arm64.deb
+        - hailo-tappas-core_5.2.0_arm64.deb
+        
+    - name: Install .deb packages using apt
+      apt:
+        deb: "{{ download_path }}/{{ item }}"
+        state: present
+      loop:
+        - hailo_gen_ai_model_zoo_5.2.0.deb
+        - hailort_5.2.0_arm64.deb
+        - hailo-tappas-core_5.2.0_arm64.deb
+
+    - name: Install Python wheel using pip
+      pip:
+        name: "{{ download_path }}/hailort-5.2.0-cp313-linux_aarch64.whl"
+        state: present
+        executable: pip3  # Ensures it uses Python 3
+      
+    - name: Clone the Repo
+      become: true
+      ansible.builtin.git:
+        repo: "https://github.com/nadaved1/hailo-apps-internal.git"
+        dest: "/tmp/hailo-apps-internal"
+        version: "{{ branch }}"
+        
+    - name: Install the GH
+      become: true
+      ansible.builtin.shell: |
+        cd /tmp/hailo-apps-internal
+        sudo ./install.sh
+        
+    - name: Run the sanity
+      ansible.builtin.shell: |
+        cd /tmp/hailo-apps-internal
+        . venv_hailo_apps/bin/activate
+        ./run_tests.sh --sanity
