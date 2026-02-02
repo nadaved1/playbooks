@@ -49,7 +49,7 @@
     ansible.builtin.debug:
       msg:
         - "Kernel Version: {{ kernel_ver.stdout }}"
-        - "Python Version: {{ py_ver.stdout }}"
+        - "Python Version: {{ py_ver }}"
         - "OS Version Line: {{ os_ver.stdout }}"
         - "Uptime: {{ uptime_out.stdout }}"
         
