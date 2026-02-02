@@ -6,6 +6,11 @@
     base_url: "https://dev-public.hailo.ai/2026_01/Hailo10/"
     download_path: "/tmp/hailo_pkgs"
     hrt_ver: "5.2.0"
+    hailo_wheels:
+      "3.10": "hailort-{{ hrt_ver }}-cp310-cp310-linux_x86_64.whl"
+      "3.11": "hailort-{{ hrt_ver }}-cp311-cp311-linux_x86_64.whl"
+      "3.12": "hailort-{{ hrt_ver }}-cp312-cp312-linux_x86_64.whl"
+      "3.13": "hailort-{{ hrt_ver }}-cp313-cp313-linux_x86_64.whl"
     
   pre_tasks:
   - name: Register kernel version
@@ -25,11 +30,26 @@
     ansible.builtin.command: uptime
     register: uptime_out
     changed_when: false
+  
+  - name: Detect Python3 minor version
+    setup:
+      filter: "ansible_python" # This refreshes the specific python facts
+  
+  - name: Set Python version variable
+    set_fact:
+      py_ver: "{{ ansible_python.version.major }}.{{ ansible_python.version.minor }}"
 
+  - name: Determine the correct whl filename
+    set_fact:
+      target_whl: "{{ hailo_wheels[py_ver] }}"
+      failed_when: target_whl is undefined
+      msg: "No matching Hailo wheel found for Python version {{ py_ver }}"
+      
   - name: Summary of system information
     ansible.builtin.debug:
       msg:
         - "Kernel Version: {{ kernel_ver.stdout }}"
+        - "Python Version: {{ py_ver.stdout }}"
         - "OS Version Line: {{ os_ver.stdout }}"
         - "Uptime: {{ uptime_out.stdout }}"
         
@@ -70,7 +90,7 @@
         dest: "{{ download_path }}/{{ item }}"
       loop:
         - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
-        - "hailort-{{ hrt_ver }}-cp310-cp310-linux_x86_64.whl"
+        - "{{ target_whl }}"
         - "hailort_{{ hrt_ver }}_amd64.deb"
         - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
         - "hailort-pcie-driver_{{ hrt_ver }}_all.deb"
@@ -94,7 +114,7 @@
     - name: Clone the Repo
       become: true
       ansible.builtin.git:
-        repo: "https://github.com/nadaved1/hailo-apps-internal.git"
+        repo: "https://github.com/hailocs/hailo-apps-internal.git"
         dest: "/tmp/hailo-apps-internal"
         version: "{{ branch }}"
         
