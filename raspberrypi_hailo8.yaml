@@ -41,7 +41,7 @@
       ansible.builtin.git:
         repo: "https://github.com/nadaved1/hailo-apps-internal.git"
         dest: "/tmp/hailo-apps-internal"
-        version: dev
+        version: "{{ branch }}"
     - name: Install the GH
       become: true
       ansible.builtin.shell: |
