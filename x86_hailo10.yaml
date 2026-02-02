@@ -3,8 +3,9 @@
   hosts: all
   become: true
   vars:
-    base_url: "https://dev-public.hailo.ai/2025_10/Hailo10/"
+    base_url: "https://dev-public.hailo.ai/2026_01/Hailo10/"
     download_path: "/tmp/hailo_pkgs"
+    hrt_ver: "5.2.0"
     
   pre_tasks:
   - name: Register kernel version
@@ -67,23 +68,23 @@
         url: "{{ base_url }}{{ item }}"
         dest: "{{ download_path }}/{{ item }}"
       loop:
-        - hailo_gen_ai_model_zoo_5.2.0.deb
-        - hailort-5.2.0-cp313-linux_aarch64.whl
-        - hailort_5.2.0_arm64.deb
-        - hailo-tappas-core_5.2.0_arm64.deb
+        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}.deb"
+        - "hailort-{{ hrt_ver }}-cp313-linux_aarch64.whl"
+        - "hailort_{{ hrt_ver }}_arm64.deb"
+        - "hailo-tappas-core_{{ hrt_ver }}_arm64.deb"
         
     - name: Install .deb packages using apt
       apt:
         deb: "{{ download_path }}/{{ item }}"
         state: present
       loop:
-        - hailo_gen_ai_model_zoo_5.2.0.deb
-        - hailort_5.2.0_arm64.deb
-        - hailo-tappas-core_5.2.0_arm64.deb
+        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}.deb"
+        - "hailort_{{ hrt_ver }}_arm64.deb"
+        - "hailo-tappas-core_{{ hrt_ver }}_arm64.deb"
 
     - name: Install Python wheel using pip
       pip:
-        name: "{{ download_path }}/hailort-5.2.0-cp313-linux_aarch64.whl"
+        name: "{{ download_path }}/hailort-{{ hrt_ver }}-cp313-linux_aarch64.whl"
         state: present
         executable: pip3  # Ensures it uses Python 3
       
