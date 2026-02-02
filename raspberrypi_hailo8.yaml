@@ -2,6 +2,8 @@
 - name: Basic Installation
   hosts: all
   become: true
+  vars:
+    test_arg: "--sanity"
 
   pre_tasks:
     - name: Verify effective user (should be 0)
@@ -51,4 +53,4 @@
       ansible.builtin.shell: |
         cd /tmp/hailo-apps-internal
         . venv_hailo_apps/bin/activate
-        ./run_tests.sh
+        ./run_tests.sh {{ test_arg }}
