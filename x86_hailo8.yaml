@@ -86,7 +86,7 @@
         
     - name: Download .deb and .whl files from Hailo server
       get_url:
-        url: "{{ base_url }}{{ item }}"
+        url: "{{ base_url }}/{{ item }}"
         dest: "{{ download_path }}/{{ item }}"
       loop:
         - "{{ target_whl }}"
