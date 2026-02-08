@@ -89,7 +89,6 @@
         url: "{{ base_url }}{{ item }}"
         dest: "{{ download_path }}/{{ item }}"
       loop:
-        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
         - "{{ target_whl }}"
         - "hailort_{{ hrt_ver }}_amd64.deb"
         - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
@@ -103,7 +102,6 @@
         - "hailort-pcie-driver_{{ hrt_ver }}_all.deb"
         - "hailort_{{ hrt_ver }}_amd64.deb"
         - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
-        - "hailo_gen_ai_model_zoo_{{ hrt_ver }}_amd64.deb"
 
     - name: Install Python wheel using pip
       pip:
