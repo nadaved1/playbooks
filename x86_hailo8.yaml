@@ -6,6 +6,7 @@
     base_url: "https://dev-public.hailo.ai/2025_10/Hailo8"
     download_path: "/tmp/hailo_pkgs"
     hrt_ver: "4.23.0"
+    tappas_ver: "5.1.0"
     hailo_wheels:
       "3.10": "hailort-{{ hrt_ver }}-cp310-cp310-linux_x86_64.whl"
       "3.11": "hailort-{{ hrt_ver }}-cp311-cp311-linux_x86_64.whl"
@@ -91,7 +92,7 @@
       loop:
         - "{{ target_whl }}"
         - "hailort_{{ hrt_ver }}_amd64.deb"
-        - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
+        - "hailo-tappas-core_{{ tappas_ver }}_amd64.deb"
         - "hailort-pcie-driver_{{ hrt_ver }}_all.deb"
         
     - name: Install .deb packages using apt
@@ -101,7 +102,7 @@
       loop:
         - "hailort-pcie-driver_{{ hrt_ver }}_all.deb"
         - "hailort_{{ hrt_ver }}_amd64.deb"
-        - "hailo-tappas-core_{{ hrt_ver }}_amd64.deb"
+        - "hailo-tappas-core_{{ tappas_ver }}_amd64.deb"
 
     - name: Install Python wheel using pip
       pip:
