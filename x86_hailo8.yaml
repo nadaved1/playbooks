@@ -3,7 +3,7 @@
   hosts: all
   become: true
   vars:
-    base_url: "https://dev-public.hailo.ai/2026_01/Hailo8"
+    base_url: "https://dev-public.hailo.ai/2025_10/Hailo8"
     download_path: "/tmp/hailo_pkgs"
     hrt_ver: "4.23.0"
     hailo_wheels:
